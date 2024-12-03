@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from 'react';
 
-const PratapWebsite = () => {
-  const [isGrowing, setIsGrowing] = useState(false);
-  const [fontSize, setFontSize] = useState(calculateFontSize());
+type FontSize = {
+  main: string;
+  name: string;
+  subtext: string;
+};
 
-  function calculateFontSize() {
+const PratapWebsite: React.FC = () => {
+  const [isGrowing, setIsGrowing] = useState(false);
+  const [fontSize, setFontSize] = useState<FontSize>(calculateFontSize());
+
+  function calculateFontSize(): FontSize {
     const width = window.innerWidth;
     if (width < 600) {
       return {
         main: '3.5rem',
         name: '2rem',
-        subtext: '1.5rem'
+        subtext: '1.5rem',
       };
     } else if (width < 1024) {
       return {
         main: '5.5rem',
         name: '2.5rem',
-        subtext: '2rem'
+        subtext: '2rem',
       };
     } else {
       return {
         main: '7rem',
         name: '3rem',
-        subtext: '2.5rem'
+        subtext: '2.5rem',
       };
     }
   }
@@ -41,7 +47,7 @@ const PratapWebsite = () => {
   };
 
   return (
-    <div 
+    <div
       style={{
         backgroundColor: 'black',
         height: '100vh',
@@ -52,10 +58,10 @@ const PratapWebsite = () => {
         margin: 0,
         padding: 0,
         fontFamily: 'Arial, sans-serif',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
       }}
     >
-      <div 
+      <div
         style={{
           textAlign: 'center',
           transform: isGrowing ? 'scale(1.05)' : 'scale(1)',
@@ -63,12 +69,12 @@ const PratapWebsite = () => {
           cursor: 'pointer',
           width: '90%',
           maxWidth: '800px',
-          padding: '20px'
+          padding: '20px',
         }}
         onMouseEnter={() => setIsGrowing(true)}
         onMouseLeave={() => setIsGrowing(false)}
       >
-        <h1 
+        <h1
           style={{
             color: 'white',
             fontSize: fontSize.main,
@@ -76,35 +82,35 @@ const PratapWebsite = () => {
             padding: '0',
             lineHeight: '1.2',
             wordWrap: 'break-word',
-            overflowWrap: 'break-word'
+            overflowWrap: 'break-word',
           }}
         >
           Hello Kids
         </h1>
-        <p 
+        <p
           style={{
             color: 'white',
             fontSize: fontSize.name,
             margin: '10px 0 0',
             padding: '0',
-            lineHeight: '1.2'
+            lineHeight: '1.2',
           }}
         >
           Myself Pratap
         </p>
-        <p 
+        <p
           style={{
             color: 'white',
             fontSize: fontSize.subtext,
             margin: '10px 0 0',
             padding: '0',
-            lineHeight: '1.2'
+            lineHeight: '1.2',
           }}
         >
           just build boring things
         </p>
-        
-        <button 
+
+        <button
           onClick={handleTwitterFollow}
           style={{
             marginTop: '30px',
@@ -117,17 +123,19 @@ const PratapWebsite = () => {
             cursor: 'pointer',
             transition: 'all 0.3s ease',
             transform: 'scale(1)',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
           }}
-          onMouseEnter={(e:unknown) => {
-            e.target.style.transform = 'scale(1.05)';
-            e.target.style.backgroundColor = 'black';
-            e.target.style.color = 'white';
+          onMouseEnter={(e) => {
+            const target = e.target as HTMLButtonElement;
+            target.style.transform = 'scale(1.05)';
+            target.style.backgroundColor = 'black';
+            target.style.color = 'white';
           }}
           onMouseLeave={(e) => {
-            e.target.style.transform = 'scale(1)';
-            e.target.style.backgroundColor = 'white';
-            e.target.style.color = 'black';
+            const target = e.target as HTMLButtonElement;
+            target.style.transform = 'scale(1)';
+            target.style.backgroundColor = 'white';
+            target.style.color = 'black';
           }}
         >
           Follow on Twitter
