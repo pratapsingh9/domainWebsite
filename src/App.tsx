@@ -1,147 +1,200 @@
-import React, { useState, useEffect } from 'react';
-
-type FontSize = {
-  main: string;
-  name: string;
-  subtext: string;
-};
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Twitter } from 'lucide-react';
 
 const PratapWebsite: React.FC = () => {
-  const [isGrowing, setIsGrowing] = useState(false);
-  const [fontSize, setFontSize] = useState<FontSize>(calculateFontSize());
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
 
-  function calculateFontSize(): FontSize {
-    const width = window.innerWidth;
-    if (width < 600) {
-      return {
-        main: '3.5rem',
-        name: '2rem',
-        subtext: '1.5rem',
-      };
-    } else if (width < 1024) {
-      return {
-        main: '5.5rem',
-        name: '2.5rem',
-        subtext: '2rem',
-      };
-    } else {
-      return {
-        main: '7rem',
-        name: '3rem',
-        subtext: '2.5rem',
-      };
-    }
-  }
+  const calculateResponsiveStyles = () => {
+    const { width } = screenSize;
+    
+    const fontSizes = width < 600 
+      ? { main: '2rem', name: '1.2rem', subtext: '0.9rem' }
+      : width < 1024
+        ? { main: '3.5rem', name: '1.8rem', subtext: '1.3rem' }
+        : { main: '5rem', name: '2.5rem', subtext: '1.8rem' };
+
+    const gridConfig = {
+      cols: Math.ceil(width / (width < 600 ? 20 : 40)),
+      rows: Math.ceil(screenSize.height / (width < 600 ? 20 : 40)),
+      cellSize: width < 600 ? 20 : 40
+    };
+
+    return { fontSizes, gridConfig };
+  };
+
+  const [{ fontSizes, gridConfig }, setResponsiveConfig] = useState(calculateResponsiveStyles());
 
   useEffect(() => {
     const handleResize = () => {
-      setFontSize(calculateFontSize());
+      const newScreenSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+      setScreenSize(newScreenSize);
+      setResponsiveConfig(calculateResponsiveStyles());
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const GridBackground = useMemo(() => {
+    return Array.from({ length: gridConfig.rows }, (_, rowIndex) => 
+      Array.from({ length: gridConfig.cols }, (_, colIndex) => (
+        <motion.div 
+          key={`${rowIndex}-${colIndex}`}
+          initial={{ 
+            opacity: 0, 
+            scale: 0.5,
+            backgroundColor: 'rgba(255,255,255,0.05)'
+          }}
+          animate={{ 
+            opacity: [0, 0.1, 0.05], 
+            scale: 1,
+            backgroundColor: [
+              'rgba(255,255,255,0.05)', 
+              'rgba(255,255,255,0.1)', 
+              'rgba(255,255,255,0.05)'
+            ],
+            transition: { 
+              delay: (rowIndex + colIndex) * 0.02,
+              duration: 2,
+              repeat: Infinity,
+              repeatType: 'reverse'
+            } 
+          }}
+          style={{
+            border: '1px solid rgba(255,255,255,0.05)',
+            height: '100%',
+            width: '100%',
+          }}
+        />
+      ))
+    );
+  }, [gridConfig]);
+
   const handleTwitterFollow = () => {
     window.open('https://x.com/prataps72105367', '_blank');
   };
 
   return (
-    <div
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
       style={{
-        backgroundColor: 'black',
-        height: '100vh',
+        position: 'relative',
+        height: '100vh', 
         width: '100vw',
+        backgroundColor: 'black',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 0,
-        padding: 0,
         fontFamily: 'Arial, sans-serif',
-        boxSizing: 'border-box',
+        overflow: 'hidden',
       }}
     >
-      <div
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: '100%',
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: `repeat(${gridConfig.cols}, 1fr)`,
+          gridTemplateRows: `repeat(${gridConfig.rows}, 1fr)`,
+          zIndex: 1
+        }}
+      >
+        {GridBackground}
+      </div>
+
+      <motion.div
         style={{
           textAlign: 'center',
-          transform: isGrowing ? 'scale(1.05)' : 'scale(1)',
-          transition: 'transform 0.3s ease',
-          cursor: 'pointer',
+          zIndex: 10,
           width: '90%',
           maxWidth: '800px',
           padding: '20px',
+          position: 'relative',
         }}
-        onMouseEnter={() => setIsGrowing(true)}
-        onMouseLeave={() => setIsGrowing(false)}
       >
-        <h1
+        <motion.h1
           style={{
             color: 'white',
-            fontSize: fontSize.main,
+            fontSize: fontSizes.main,
             margin: '0',
             padding: '0',
             lineHeight: '1.2',
             wordWrap: 'break-word',
-            overflowWrap: 'break-word',
+            fontWeight: 'bold',
+            textShadow: '0 0 10px rgba(255,255,255,0.3)',
           }}
         >
           Hello Kids
-        </h1>
-        <p
+        </motion.h1>
+        <motion.p
           style={{
             color: 'white',
-            fontSize: fontSize.name,
+            fontSize: fontSizes.name,
             margin: '10px 0 0',
             padding: '0',
             lineHeight: '1.2',
+            fontWeight: 'bold',
+            letterSpacing: '0.05em',
+            background: 'linear-gradient(to right, #fff, #aaa)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
           }}
         >
           Myself Pratap
-        </p>
-        <p
+        </motion.p>
+        <motion.p
           style={{
-            color: 'white',
-            fontSize: fontSize.subtext,
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: fontSizes.subtext,
             margin: '10px 0 0',
             padding: '0',
             lineHeight: '1.2',
+            fontStyle: 'italic',
+            fontWeight: '300',
           }}
         >
-          just build boring things
-        </p>
+          just build things
+        </motion.p>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleTwitterFollow}
           style={{
             marginTop: '30px',
-            padding: '12px 24px',
-            fontSize: '1.2rem',
+            padding: screenSize.width < 600 ? '8px 16px' : '12px 24px',
+            fontSize: screenSize.width < 600 ? '0.9rem' : '1rem',
             backgroundColor: 'white',
             color: 'black',
             border: 'none',
             borderRadius: '5px',
             cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            margin: '30px auto 0',
             transition: 'all 0.3s ease',
-            transform: 'scale(1)',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
           }}
-          onMouseEnter={(e) => {
-            const target = e.target as HTMLButtonElement;
-            target.style.transform = 'scale(1.05)';
-            target.style.backgroundColor = 'black';
-            target.style.color = 'white';
-          }}
-          onMouseLeave={(e) => {
-            const target = e.target as HTMLButtonElement;
-            target.style.transform = 'scale(1)';
-            target.style.backgroundColor = 'white';
-            target.style.color = 'black';
-          }}
         >
+          <Twitter size={screenSize.width < 600 ? 16 : 20} />
           Follow on Twitter
-        </button>
-      </div>
-    </div>
+        </motion.button>
+      </motion.div>
+    </motion.div>
   );
 };
 
