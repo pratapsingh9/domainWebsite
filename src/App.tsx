@@ -136,7 +136,7 @@ const PratapWebsite: React.FC = () => {
             textShadow: '0 0 10px rgba(255,255,255,0.3)',
           }}
         >
-          Hello Kids
+          Yoo Kids
         </motion.h1>
         <motion.p
           style={{
